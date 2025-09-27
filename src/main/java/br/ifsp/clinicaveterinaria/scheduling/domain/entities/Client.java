@@ -9,7 +9,12 @@ public class Client {
     private CPF cpf;
     private Animal animal;
 
-    
+    public Client(String name, Phone phone, CPF cpf, Animal animal) {
+        this.name = name;
+        this.phone = phone;
+        this.cpf = cpf;
+        this.animal = animal;
+    }
 
     public String getName() {
         return name;
