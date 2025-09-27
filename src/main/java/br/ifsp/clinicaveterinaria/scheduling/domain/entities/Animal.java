@@ -8,6 +8,13 @@ public class Animal {
     private String breed;
     private Phone phone;
 
+    public Animal(String name, int age, String breed, Phone phone) {
+        this.name = name;
+        Age = age;
+        this.breed = breed;
+        this.phone = phone;
+    }
+
     public String getName() {
         return name;
     }
