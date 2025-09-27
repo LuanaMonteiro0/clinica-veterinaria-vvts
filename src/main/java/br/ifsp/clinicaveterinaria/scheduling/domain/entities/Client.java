@@ -3,13 +3,16 @@ package br.ifsp.clinicaveterinaria.scheduling.domain.entities;
 import br.ifsp.clinicaveterinaria.scheduling.domain.valueobjects.CPF;
 import br.ifsp.clinicaveterinaria.scheduling.domain.valueobjects.Phone;
 
+import java.util.List;
+
 public class Client {
+
     private String name;
     private Phone phone;
     private CPF cpf;
-    private Animal animal;
+    private List<Animal> animal;
 
-    public Client(String name, Phone phone, CPF cpf, Animal animal) {
+    public Client(String name, Phone phone, CPF cpf, List<Animal> animal) {
         this.name = name;
         this.phone = phone;
         this.cpf = cpf;
@@ -40,11 +43,12 @@ public class Client {
         this.cpf = cpf;
     }
 
-    public Animal getAnimal() {
+    public List<Animal> getAnimal() {
         return animal;
     }
 
-    public void setAnimal(Animal animal) {
+    public void setAnimal(List<Animal> animal) {
         this.animal = animal;
     }
+
 }
