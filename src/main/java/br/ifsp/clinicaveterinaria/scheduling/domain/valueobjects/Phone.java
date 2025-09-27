@@ -1,6 +1,6 @@
 package br.ifsp.clinicaveterinaria.scheduling.domain.valueobjects;
 
-public class Phone {
+public final class Phone {
     private String phone;
 
     public String getPhone() {

@@ -1,6 +1,6 @@
 package br.ifsp.clinicaveterinaria.scheduling.domain.valueobjects;
 
-public class CPF {
+public final class CPF {
     private String CPF;
 
     public String getCPF() {
