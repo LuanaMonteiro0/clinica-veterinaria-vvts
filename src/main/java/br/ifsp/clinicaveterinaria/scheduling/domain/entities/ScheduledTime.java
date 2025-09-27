@@ -7,6 +7,11 @@ public class ScheduledTime {
     private LocalTime startTime;
     private LocalTime endTime;
 
+    public ScheduledTime(LocalTime startTime, LocalTime endTime) {
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
     public LocalTime getStartTime() {
         return startTime;
     }
