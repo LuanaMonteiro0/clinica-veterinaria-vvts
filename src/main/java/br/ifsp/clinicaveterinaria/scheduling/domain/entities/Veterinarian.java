@@ -1,6 +1,7 @@
 package br.ifsp.clinicaveterinaria.scheduling.domain.entities;
 
 import br.ifsp.clinicaveterinaria.scheduling.domain.valueobjects.CRMV;
+import br.ifsp.clinicaveterinaria.scheduling.domain.valueobjects.Phone;
 
 public class Veterinarian {
 
@@ -10,9 +11,10 @@ public class Veterinarian {
     private Phone phone;
 
 
-    public Veterinarian(String name, String email, Phone phone) {
+    public Veterinarian(String name, String email, CRMV crmv, Phone phone) {
         this.name = name;
         this.email = email;
+        this.crmv = crmv;
         this.phone = phone;
     }
 
