@@ -1,4 +1,4 @@
-package br.ifsp.demo.security.config;
+package br.ifsp.clinicaveterinaria.security.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

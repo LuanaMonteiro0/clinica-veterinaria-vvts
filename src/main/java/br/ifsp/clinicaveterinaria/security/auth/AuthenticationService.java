@@ -1,10 +1,10 @@
-package br.ifsp.demo.security.auth;
+package br.ifsp.clinicaveterinaria.security.auth;
 
-import br.ifsp.demo.exception.EntityAlreadyExistsException;
-import br.ifsp.demo.security.config.JwtService;
-import br.ifsp.demo.security.user.JpaUserRepository;
-import br.ifsp.demo.security.user.Role;
-import br.ifsp.demo.security.user.User;
+import br.ifsp.clinicaveterinaria.exception.EntityAlreadyExistsException;
+import br.ifsp.clinicaveterinaria.security.config.JwtService;
+import br.ifsp.clinicaveterinaria.security.user.JpaUserRepository;
+import br.ifsp.clinicaveterinaria.security.user.Role;
+import br.ifsp.clinicaveterinaria.security.user.User;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

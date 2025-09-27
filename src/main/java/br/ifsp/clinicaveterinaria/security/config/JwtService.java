@@ -1,4 +1,4 @@
-package br.ifsp.demo.security.config;
+package br.ifsp.clinicaveterinaria.security.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

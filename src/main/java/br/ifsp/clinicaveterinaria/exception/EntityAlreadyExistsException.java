@@ -1,4 +1,4 @@
-package br.ifsp.demo.exception;
+package br.ifsp.clinicaveterinaria.exception;
 
 public class EntityAlreadyExistsException extends RuntimeException {
     public EntityAlreadyExistsException(String message) {

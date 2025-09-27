@@ -1,10 +1,10 @@
-package br.ifsp.demo;
+package br.ifsp.clinicaveterinaria;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class DemoAuthAppApplicationTests {
+class ClinicaVeterinariaAuthAppApplicationTests {
 
     @Test
     void contextLoads() {

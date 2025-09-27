@@ -1,13 +1,13 @@
-package br.ifsp.demo;
+package br.ifsp.clinicaveterinaria;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class DemoAuthAppApplication {
+public class ClinicaVeterinariaAuthAppApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(DemoAuthAppApplication.class, args);
+        SpringApplication.run(ClinicaVeterinariaAuthAppApplication.class, args);
     }
 
 }
