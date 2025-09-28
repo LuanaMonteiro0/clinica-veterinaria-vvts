@@ -5,6 +5,7 @@ import java.util.Objects;
 
 public class Appointment {
 
+    private Long id;
     private Client client;
     private Veterinarian vet;
     private ScheduledDate scheduledDate;
@@ -32,6 +33,10 @@ public class Appointment {
         this.serviceRoom = serviceRoom;
         this.animal = animal;
     }
+
+    public Long getId() { return id; }
+    
+    public void setId(Long id) { this.id = id; }
 
     public Client getClient() {
         return client;
