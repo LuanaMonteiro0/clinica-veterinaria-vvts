@@ -1,5 +1,8 @@
 package br.ifsp.clinicaveterinaria.scheduling.domain.entities;
 
+import java.util.List;
+import java.util.Objects;
+
 public class Appointment {
 
     private Client client;
@@ -7,13 +10,27 @@ public class Appointment {
     private ScheduledDate scheduledDate;
     private ScheduledTime scheduledTime;
     private ServiceRoom serviceRoom;
+    private Animal animal;
 
-    public Appointment(ServiceRoom serviceRoom, ScheduledTime scheduledTime, ScheduledDate scheduledDate, Veterinarian vet, Client client) {
-        this.serviceRoom = serviceRoom;
-        this.scheduledTime = scheduledTime;
-        this.scheduledDate = scheduledDate;
-        this.vet = vet;
+    public Appointment(Client client, Veterinarian vet, ScheduledDate scheduledDate, ScheduledTime scheduledTime, ServiceRoom serviceRoom, Animal animal) {
+        Objects.requireNonNull(client);
+        Objects.requireNonNull(vet);
+        Objects.requireNonNull(scheduledDate);
+        Objects.requireNonNull(scheduledTime);
+        Objects.requireNonNull(serviceRoom);
+        Objects.requireNonNull(animal);
+
+        List<Animal> clientAnimals = Objects.requireNonNull(client.getAnimal());
+        if (!clientAnimals.contains(animal)) {
+            throw new IllegalArgumentException("O animal do Appointment deve pertencer ao Client.");
+        }
+
         this.client = client;
+        this.vet = vet;
+        this.scheduledDate = scheduledDate;
+        this.scheduledTime = scheduledTime;
+        this.serviceRoom = serviceRoom;
+        this.animal = animal;
     }
 
     public Client getClient() {
@@ -55,4 +72,13 @@ public class Appointment {
     public void setServiceRoom(ServiceRoom serviceRoom) {
         this.serviceRoom = serviceRoom;
     }
+
+    public Animal getAnimal() {
+        return animal;
+    }
+
+    public void setAnimal(Animal animal) {
+        this.animal = animal;
+    }
+
 }
