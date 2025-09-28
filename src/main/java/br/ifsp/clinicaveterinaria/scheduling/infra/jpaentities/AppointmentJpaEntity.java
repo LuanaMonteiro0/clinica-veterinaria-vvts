@@ -34,7 +34,7 @@ public class AppointmentJpaEntity {
     @Embedded
     private ScheduledTimeEmbeddable time;
 
-    protected AppointmentJpaEntity() {}
+    public AppointmentJpaEntity() {}
 
     public AppointmentJpaEntity(Long id,
                                 ClientJpaEntity client,
