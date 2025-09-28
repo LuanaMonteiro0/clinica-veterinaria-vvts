@@ -7,6 +7,17 @@ public class Animal {
     private String breed;
     private double weight;
 
+    public Animal() {
+
+    }
+
+    public Animal(String name, int age, String breed, double weight) {
+        this.name = name;
+        Age = age;
+        this.breed = breed;
+        this.weight = weight;
+    }
+
     public Animal(Long id, String name, int age, String breed, double weight) {
         this.id = id;
         this.name = name;

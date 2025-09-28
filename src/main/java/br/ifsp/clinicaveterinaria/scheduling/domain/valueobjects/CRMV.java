@@ -12,6 +12,9 @@ public final class CRMV {
             "^(?i)CRMV/(?<uf>AC|AL|AP|AM|BA|CE|DF|ES|GO|MA|MT|MS|MG|PA|PB|PR|PE|PI|RJ|RN|RS|RO|RR|SC|SP|SE|TO)\\s+(?<num>\\d{1,6})$"
     );
 
+    public CRMV() {
+    }
+
     public CRMV(String crmv) {
         this.crmv = crmv;
     }
