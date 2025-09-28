@@ -19,8 +19,8 @@ public class AnimalJpaEntity {
     @Column(name="breed", nullable = false)
     private String breed;
 
-    @Column(name="phone", nullable = false)
-    private String phone;
+    @Column(name="weight", nullable = false)
+    private double weight;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "client_cpf", nullable = false)
@@ -28,11 +28,11 @@ public class AnimalJpaEntity {
 
     protected AnimalJpaEntity() { }
 
-    public AnimalJpaEntity(String name, int age, String breed, String phone, ClientJpaEntity owner) {
+    public AnimalJpaEntity(String name, int age, String breed, double weight, ClientJpaEntity owner) {
         this.name = name;
         this.age = age;
         this.breed = breed;
-        this.phone = phone;
+        this.weight = weight;
         this.owner = owner;
     }
 
@@ -40,12 +40,12 @@ public class AnimalJpaEntity {
     public String getName() { return name; }
     public int getAge() { return age; }
     public String getBreed() { return breed; }
-    public String getPhone() { return phone; }
+    public double getWeight() { return weight; }
     public ClientJpaEntity getOwner() { return owner; }
 
     public void setName(String name) { this.name = name; }
     public void setAge(int age) { this.age = age; }
     public void setBreed(String breed) { this.breed = breed; }
-    public void setPhone(String phone) { this.phone = phone; }
+    public void setWeight(double weight) { this.weight = weight; }
     public void setOwner(ClientJpaEntity owner) { this.owner = owner; }
 }

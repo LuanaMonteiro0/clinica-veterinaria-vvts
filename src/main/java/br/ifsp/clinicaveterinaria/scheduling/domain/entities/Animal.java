@@ -1,20 +1,18 @@
 package br.ifsp.clinicaveterinaria.scheduling.domain.entities;
 
-import br.ifsp.clinicaveterinaria.scheduling.domain.valueobjects.Phone;
-
 public class Animal {
     private Long id;
     private String name;
     private int Age;
     private String breed;
-    private Phone phone;
+    private double weight;
 
-    public Animal(Long id, String name, int age, String breed, Phone phone) {
+    public Animal(Long id, String name, int age, String breed, double weight) {
         this.id = id;
         this.name = name;
         Age = age;
         this.breed = breed;
-        this.phone = phone;
+        this.weight = weight;
     }
 
     public Long getId() {
@@ -41,6 +39,14 @@ public class Animal {
         Age = age;
     }
 
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
+    }
+
     public String getBreed() {
         return breed;
     }
@@ -49,11 +55,4 @@ public class Animal {
         this.breed = breed;
     }
 
-    public Phone getPhone() {
-        return phone;
-    }
-
-    public void setPhone(Phone phone) {
-        this.phone = phone;
-    }
 }

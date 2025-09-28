@@ -8,11 +8,11 @@ import java.util.UUID;
 
 @Service
 public class AuthenticationInfoService {
-    public UUID getAuthenticatedUserId() {
+    public String getAuthenticatedUserId() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated())
             throw new IllegalStateException("Unauthorized user request.");
         var applicationUser = (User) authentication.getPrincipal();
-        return applicationUser//.getId();
+        return applicationUser.getUsername();//.getId();
     }
 }
