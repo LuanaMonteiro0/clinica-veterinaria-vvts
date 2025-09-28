@@ -40,7 +40,7 @@ public final class ClientMapper {
         CPF cpf = new CPF();
         cpf.setCPF(e.getCpf());
         Phone phone = new Phone();
-        phone.setPhone(e.getPhone()); 
+        phone.setPhone(e.getPhone());
         List<Animal> animals = new ArrayList<>();
         if (e.getAnimals() != null) {
             for (AnimalJpaEntity a : e.getAnimals()) {
