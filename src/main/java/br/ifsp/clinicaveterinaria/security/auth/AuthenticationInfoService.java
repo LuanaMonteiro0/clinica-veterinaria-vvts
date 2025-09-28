@@ -13,6 +13,6 @@ public class AuthenticationInfoService {
         if (authentication == null || !authentication.isAuthenticated())
             throw new IllegalStateException("Unauthorized user request.");
         var applicationUser = (User) authentication.getPrincipal();
-        return applicationUser.getId();
+        return applicationUser//.getId();
     }
 }
