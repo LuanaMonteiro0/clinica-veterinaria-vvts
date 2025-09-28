@@ -6,11 +6,15 @@ import java.util.regex.Pattern;
 
 public final class CRMV {
 
+    private String crmv;
+
     private static final Pattern CRMV_PATTERN = Pattern.compile(
             "^(?i)CRMV/(?<uf>AC|AL|AP|AM|BA|CE|DF|ES|GO|MA|MT|MS|MG|PA|PB|PR|PE|PI|RJ|RN|RS|RO|RR|SC|SP|SE|TO)\\s+(?<num>\\d{1,6})$"
     );
 
-    private String crmv;
+    public CRMV(String crmv) {
+        this.crmv = crmv;
+    }
 
     public String getCrmv() {
         return crmv;
@@ -33,8 +37,6 @@ public final class CRMV {
 
         this.crmv = "CRMV/" + uf + " " + num;
     }
-
-    // ----------- utilitários -----------
 
     private static String leftPadTo6(String digits) {
         int len = digits.length();
