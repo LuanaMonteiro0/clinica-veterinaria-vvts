@@ -20,6 +20,13 @@ public class SchedulingService {
         this.appointmentRepository = appointmentRepository;
     }
 
+    public void requestAppointment(br.ifsp.clinicaveterinaria.scheduling.domain.entities.Client client) {
+        if (client == null) {
+            throw new IllegalArgumentException("cliente deve ser selecionado");
+        }
+        // lógica futura para criar/validar o atendimento
+    }
+
     public List<Veterinarian> findAvailableVeterinarians(ScheduledDate appointmentDate) {
         LocalDate date = extractDate(appointmentDate);
         List<Veterinarian> all = findAllVets();
