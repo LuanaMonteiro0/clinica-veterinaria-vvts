@@ -3,6 +3,10 @@ package br.ifsp.clinicaveterinaria.scheduling.domain.valueobjects;
 public final class Phone {
     private String phone;
 
+    public Phone(String phone) {
+        this.phone = phone;
+    }
+
     public String getPhone() {
         return phone;
     }
