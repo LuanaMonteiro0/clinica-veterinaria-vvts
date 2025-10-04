@@ -1,6 +1,7 @@
 package br.ifsp.clinicaveterinaria.scheduling.domain.services;
 
 import br.ifsp.clinicaveterinaria.scheduling.domain.entities.Appointment;
+import br.ifsp.clinicaveterinaria.scheduling.domain.entities.Client;
 import br.ifsp.clinicaveterinaria.scheduling.domain.entities.ScheduledDate;
 import br.ifsp.clinicaveterinaria.scheduling.domain.entities.Veterinarian;
 import br.ifsp.clinicaveterinaria.scheduling.infra.persistence.Repository;
@@ -20,11 +21,21 @@ public class SchedulingService {
         this.appointmentRepository = appointmentRepository;
     }
 
-    public void requestAppointment(br.ifsp.clinicaveterinaria.scheduling.domain.entities.Client client) {
+    public void requestAppointment(Client client) {
         if (client == null) {
             throw new IllegalArgumentException("cliente deve ser selecionado");
         }
-        // lógica futura para criar/validar o atendimento
+        // lógica futura...
+    }
+
+    public void requestAppointment(Client client, Veterinarian veterinarian) {
+        if (client == null) {
+            throw new IllegalArgumentException("cliente deve ser selecionado");
+        }
+        if (veterinarian == null) {
+            throw new IllegalArgumentException("veterinário deve ser selecionado");
+        }
+        // lógica futura...
     }
 
     public List<Veterinarian> findAvailableVeterinarians(ScheduledDate appointmentDate) {
