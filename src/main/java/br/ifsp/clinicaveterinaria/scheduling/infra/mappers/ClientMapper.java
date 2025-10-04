@@ -39,8 +39,7 @@ public final class ClientMapper {
     public static Client toDomain(ClientJpaEntity e) {
         CPF cpf = new CPF();
         cpf.setCPF(e.getCpf());
-        Phone phone = new Phone();
-        phone.setPhone(e.getPhone());
+        Phone phone = new Phone(e.getPhone());
         List<Animal> animals = new ArrayList<>();
         if (e.getAnimals() != null) {
             for (AnimalJpaEntity a : e.getAnimals()) {

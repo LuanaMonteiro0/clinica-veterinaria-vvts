@@ -14,11 +14,11 @@ import java.util.UUID;
 @Tag(name = "Hello API")
 public class TransactionController {
 
-    private final AuthenticationInfoService authService;
+/*    private final AuthenticationInfoService authService;
 
     @GetMapping
     public ResponseEntity<String> hello() {
         final UUID userId = authService.getAuthenticatedUserId();
         return ResponseEntity.ok("Hello: " + userId.toString());
-    }
+    }*/
 }
