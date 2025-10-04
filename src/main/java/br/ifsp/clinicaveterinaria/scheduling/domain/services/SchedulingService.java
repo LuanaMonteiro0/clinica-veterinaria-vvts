@@ -40,6 +40,88 @@ public class SchedulingService {
                 .toList();
     }
 
+    public List<ScheduledDate> findAvailableDaysFor(
+            Veterinarian vet,
+            LocalDate start,
+            LocalDate end
+    ) {
+        if (vet == null) throw new IllegalArgumentException("veterinário deve ser selecionado");
+        if (start == null || end == null || end.isBefore(start)) throw new IllegalArgumentException("intervalo de datas inválido");
+
+        List<?> appts = tryFindAppointmentsByVetAndDateBetween(this.appointmentRepository, vet, start, end);
+
+        Set<LocalDate> booked = appts.stream()
+                .map(this::extractDateFromAppointment)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        List<ScheduledDate> freeDays = new
+                ArrayList<>();
+        LocalDate d = start;
+        while (!d.isAfter(end)) {
+            if (!booked.contains(d)) {
+                freeDays.add(new ScheduledDate(d));
+            }
+            d = d.plusDays(1);
+        }
+        return freeDays;
+    }
+
+    private
+    List<?> tryFindAppointmentsByVetAndDateBetween(
+            Object repository,
+            Veterinarian vet,
+            LocalDate start,
+            LocalDate end
+    ) {
+        if (repository == null) return
+                Collections.emptyList();
+        try {
+            Method m = repository.getClass().getMethod("findByVetAndDateBetween",
+                    Veterinarian.class,
+                    LocalDate.class,
+                    LocalDate.class);
+            Object r = m.invoke(repository, vet, start, end);
+            if (r instanceof
+                    List<?> l) return l;
+        } catch (Exception ignored) {}
+
+        try {
+
+            Method m = repository.getClass().getMethod("findByVet",
+                    Veterinarian.class);
+            Object r = m.invoke(repository, vet);
+            if (r instanceof java.util.List<?> l) {
+                return l.stream()
+                        .filter(o -> {
+                            LocalDate d = extractDateFromAppointment(o);
+                            return d != null && !d.isBefore(start) && !d.isAfter(end);
+                        })
+                        .toList();
+            }
+        } catch (Exception ignored) {}
+
+        return java.util.Collections.emptyList();
+    }
+
+    private LocalDate extractDateFromAppointment(Object appt) {
+        try {
+
+            Method m = appt.getClass().getMethod("getScheduledDate");
+            Object r = m.invoke(appt);
+            if (r instanceof ScheduledDate sd) {
+                return extractDate(sd);
+            }
+        } catch (Exception ignored) {}
+        try {
+
+            Method m = appt.getClass().getMethod("getDate");
+            Object r = m.invoke(appt);
+            if (r instanceof LocalDate d) return d;
+        } catch (Exception ignored) {}
+        return null;
+    }
+
     private LocalDate extractDate(ScheduledDate sd) {
         try {
             Method m = sd.getClass().getMethod("value");
