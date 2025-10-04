@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 
 public class SchedulingServiceTest {
@@ -42,5 +43,15 @@ public class SchedulingServiceTest {
         List<Veterinarian> obtained = service.findAvailableVeterinarians(appointmentDate);
 
         assertThat(obtained).containsExactlyInAnyOrder(joao, maria);
+    }
+
+
+    @Test
+    void givenAppointmentRequested_whenNoClientSelected_thenThrowIllegalArgument() {
+        SchedulingService service = new SchedulingService(null, null);
+
+        assertThatThrownBy(() -> service.requestAppointment(null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("cliente");
     }
 }
