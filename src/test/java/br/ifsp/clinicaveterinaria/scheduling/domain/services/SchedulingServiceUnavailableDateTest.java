@@ -2,6 +2,7 @@ package br.ifsp.clinicaveterinaria.scheduling.domain.services;
 
 import br.ifsp.clinicaveterinaria.scheduling.domain.entities.*;
 import br.ifsp.clinicaveterinaria.scheduling.domain.repositories.AppointmentRepository;
+import br.ifsp.clinicaveterinaria.scheduling.domain.repositories.ServiceRoomRepository;
 import br.ifsp.clinicaveterinaria.scheduling.domain.repositories.VeterinarianRepository;
 import br.ifsp.clinicaveterinaria.scheduling.domain.valueobjects.CPF;
 import br.ifsp.clinicaveterinaria.scheduling.domain.valueobjects.CRMV;
@@ -24,8 +25,9 @@ public class SchedulingServiceUnavailableDateTest {
     void shouldThrowErrorWhenUnavailableDayIsSelected() {
         VeterinarianRepository veterinarianRepo = mock(VeterinarianRepository.class);
         AppointmentRepository appointmentRepo = mock(AppointmentRepository.class);
+        ServiceRoomRepository roomRepo = mock(ServiceRoomRepository.class);
 
-        SchedulingService service = new SchedulingService(veterinarianRepo, appointmentRepo);
+        SchedulingService service = new SchedulingService(veterinarianRepo, appointmentRepo, roomRepo);
 
         CPF cpf = new CPF();
         cpf.setCPF("529.982.247-25");
@@ -47,7 +49,7 @@ public class SchedulingServiceUnavailableDateTest {
 
         when(appointmentRepo.findByVetAndDate(vet, unavailableDate)).thenReturn(fullyBookedAppointments);
 
-        assertThatThrownBy(() -> service.requestAppointment(client, vet, new ScheduledDate(unavailableDate)))
+        assertThatThrownBy(() -> service.requestAppointment(client, vet, new ScheduledDate(unavailableDate), null, animal))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Data indisponível.");
     }

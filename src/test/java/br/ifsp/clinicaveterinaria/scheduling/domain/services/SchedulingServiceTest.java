@@ -3,6 +3,7 @@ package br.ifsp.clinicaveterinaria.scheduling.domain.services;
 import br.ifsp.clinicaveterinaria.scheduling.domain.entities.ScheduledDate;
 import br.ifsp.clinicaveterinaria.scheduling.domain.entities.Veterinarian;
 import br.ifsp.clinicaveterinaria.scheduling.domain.repositories.AppointmentRepository;
+import br.ifsp.clinicaveterinaria.scheduling.domain.repositories.ServiceRoomRepository;
 import br.ifsp.clinicaveterinaria.scheduling.domain.repositories.VeterinarianRepository;
 import br.ifsp.clinicaveterinaria.scheduling.domain.valueobjects.CRMV;
 import br.ifsp.clinicaveterinaria.scheduling.domain.valueobjects.Phone;
@@ -24,12 +25,13 @@ public class SchedulingServiceTest {
 
         VeterinarianRepository vetRepo = mock(VeterinarianRepository.class);
         AppointmentRepository appointmentRepo = mock(AppointmentRepository.class);
+        ServiceRoomRepository roomRepo = mock(ServiceRoomRepository.class);
 
         when(vetRepo.findAll()).thenReturn(List.of(joao, maria));
         LocalDate date = LocalDate.of(2025, 10, 10);
         when(appointmentRepo.findByDate(date)).thenReturn(Collections.emptyList());
 
-        SchedulingService service = new SchedulingService(vetRepo, appointmentRepo);
+        SchedulingService service = new SchedulingService(vetRepo, appointmentRepo, roomRepo);
         ScheduledDate appointmentDate = new ScheduledDate(date);
 
         List<Veterinarian> obtained = service.findAvailableVeterinarians(appointmentDate);
@@ -39,9 +41,9 @@ public class SchedulingServiceTest {
 
     @Test
     void givenAppointmentRequested_whenNoClientSelected_thenThrowIllegalArgument() {
-        SchedulingService service = new SchedulingService(null, null);
+        SchedulingService service = new SchedulingService(mock(VeterinarianRepository.class), mock(AppointmentRepository.class), mock(ServiceRoomRepository.class));
 
-        assertThatThrownBy(() -> service.requestAppointment(null, null, null))
+        assertThatThrownBy(() -> service.requestAppointment(null, null, null, null, null))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("cliente");
     }

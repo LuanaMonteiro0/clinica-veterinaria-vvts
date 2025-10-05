@@ -2,6 +2,7 @@ package br.ifsp.clinicaveterinaria.scheduling.domain.services;
 
 import br.ifsp.clinicaveterinaria.scheduling.domain.entities.*;
 import br.ifsp.clinicaveterinaria.scheduling.domain.repositories.AppointmentRepository;
+import br.ifsp.clinicaveterinaria.scheduling.domain.repositories.ServiceRoomRepository;
 import br.ifsp.clinicaveterinaria.scheduling.domain.valueobjects.CRMV;
 import br.ifsp.clinicaveterinaria.scheduling.domain.valueobjects.Phone;
 import org.junit.jupiter.api.Test;
@@ -39,10 +40,11 @@ public class SchedulingServiceAvailableTimesTest {
         );
 
         AppointmentRepository appointmentRepo = mock(AppointmentRepository.class);
+        ServiceRoomRepository roomRepo = mock(ServiceRoomRepository.class);
 
         when(appointmentRepo.findByVetAndDate(vet, selectedDate)).thenReturn(List.of(bookedAppointment));
 
-        SchedulingService service = new SchedulingService(null, appointmentRepo);
+        SchedulingService service = new SchedulingService(null, appointmentRepo, roomRepo);
 
         List<ScheduledTime> availableTimes = service.findAvailableTimesFor(vet, new ScheduledDate(selectedDate));
 
