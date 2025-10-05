@@ -2,10 +2,11 @@ package br.ifsp.clinicaveterinaria.scheduling.domain.services;
 
 import br.ifsp.clinicaveterinaria.scheduling.domain.entities.Client;
 import br.ifsp.clinicaveterinaria.scheduling.domain.entities.Veterinarian;
+import br.ifsp.clinicaveterinaria.scheduling.domain.repositories.AppointmentRepository;
+import br.ifsp.clinicaveterinaria.scheduling.domain.repositories.VeterinarianRepository;
 import br.ifsp.clinicaveterinaria.scheduling.domain.valueobjects.CPF;
 import br.ifsp.clinicaveterinaria.scheduling.domain.valueobjects.CRMV;
 import br.ifsp.clinicaveterinaria.scheduling.domain.valueobjects.Phone;
-import br.ifsp.clinicaveterinaria.scheduling.infra.persistence.Repository;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -18,8 +19,8 @@ public class SchedulingServiceDateValidationTest {
 
     @Test
     void shouldThrowErrorAndCancelWhenNoDateIsSelected() {
-        Repository veterinarianRepo = mock(Repository.class);
-        Repository appointmentRepo  = mock(Repository.class);
+        VeterinarianRepository veterinarianRepo = mock(VeterinarianRepository.class);
+        AppointmentRepository appointmentRepo  = mock(AppointmentRepository.class);
 
         SchedulingService service = new SchedulingService(veterinarianRepo, appointmentRepo);
 

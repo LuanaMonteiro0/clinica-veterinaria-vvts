@@ -1,84 +1,40 @@
 package br.ifsp.clinicaveterinaria.scheduling.domain.services;
 
-import br.ifsp.clinicaveterinaria.scheduling.domain.entities.ScheduledDate;
-import br.ifsp.clinicaveterinaria.scheduling.domain.entities.Veterinarian;
+import br.ifsp.clinicaveterinaria.scheduling.domain.entities.*;
+import br.ifsp.clinicaveterinaria.scheduling.domain.repositories.AppointmentRepository;
 import br.ifsp.clinicaveterinaria.scheduling.domain.valueobjects.CRMV;
 import br.ifsp.clinicaveterinaria.scheduling.domain.valueobjects.Phone;
-import br.ifsp.clinicaveterinaria.scheduling.infra.persistence.Repository;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.time.LocalTime;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class SchedulingServiceAvailableDaysTest {
 
-    static class FakeAppointment {
-        private final Veterinarian vet;
-        private final ScheduledDate scheduledDate;
-        FakeAppointment(Veterinarian vet, LocalDate date) {
-            this.vet = vet;
-            this.scheduledDate = new ScheduledDate(date);
-        }
-        public Veterinarian getVet() { return vet; }
-        public ScheduledDate getScheduledDate() { return scheduledDate; }
-    }
-
-    static class AppointmentRepoFake implements Repository {
-        private final List<FakeAppointment> data = new ArrayList<>();
-        public void add(FakeAppointment a) { data.add(a); }
-
-        public List<FakeAppointment> findByVetAndDateBetween(Veterinarian vet, LocalDate start, LocalDate end) {
-            return data.stream()
-                    .filter(a -> a.getVet().equals(vet))
-                    .filter(a -> {
-                        LocalDate d = a.getScheduledDate().getScheduledDate();
-                        return !d.isBefore(start) && !d.isAfter(end);
-                    })
-                    .toList();
-        }
-
-        @Override
-        public void add(Object aggregate) {
-
-        }
-
-        @Override
-        public void update(Object aggregate) {
-
-        }
-
-        @Override
-        public void deleteById(Object o) {
-
-        }
-
-        @Override
-        public Optional findById(Object o) {
-            return Optional.empty();
-        }
-
-        @Override
-        public boolean existsById(Object o) {
-            return false;
-        }
-    }
-
     @Test
     void shouldReturnDaysWithoutAppointmentsInRange() {
-        Veterinarian vet = new Veterinarian("Dra. Maria", "maria@gmail.com", new CRMV("CRMV-SP 0223"), new Phone("(12) 22345-2345"));
+        CRMV crmv = new CRMV("CRMV/SP 0223");
+        Veterinarian vet = new Veterinarian("Dra. Maria", "maria@gmail.com", crmv, new Phone("(12) 22345-2345"));
+        Client client = new Client("Cliente Teste", new Phone("(11) 99999-9999"), null, Collections.emptyList());
+        ServiceRoom room = new ServiceRoom("101");
+        Animal animal = new Animal("Rex", 5, "Vira-lata", 10.5);
+        client.setAnimal(List.of(animal));
 
-        AppointmentRepoFake appointmentRepo = new AppointmentRepoFake();
-        appointmentRepo.add(new FakeAppointment(vet, LocalDate.of(2025, 10, 10))); // ocupado
-        appointmentRepo.add(new FakeAppointment(vet, LocalDate.of(2025, 10, 12))); // ocupado
+        Appointment appointment1 = new Appointment(client, vet, new ScheduledDate(LocalDate.of(2025, 10, 10)), new ScheduledTime(LocalTime.of(10,0), LocalTime.of(11,0)), room, animal);
+        Appointment appointment2 = new Appointment(client, vet, new ScheduledDate(LocalDate.of(2025, 10, 12)), new ScheduledTime(LocalTime.of(10,0), LocalTime.of(11,0)), room, animal);
+
+        AppointmentRepository appointmentRepo = mock(AppointmentRepository.class);
+        LocalDate start = LocalDate.of(2025, 10, 10);
+        LocalDate end = LocalDate.of(2025, 10, 13);
+        when(appointmentRepo.findByVetAndDateBetween(vet, start, end)).thenReturn(List.of(appointment1, appointment2));
 
         SchedulingService service = new SchedulingService(null, appointmentRepo);
-
-        LocalDate start = LocalDate.of(2025, 10, 10);
-        LocalDate end   = LocalDate.of(2025, 10, 13);
 
         List<ScheduledDate> obtained = service.findAvailableDaysFor(vet, start, end);
 
