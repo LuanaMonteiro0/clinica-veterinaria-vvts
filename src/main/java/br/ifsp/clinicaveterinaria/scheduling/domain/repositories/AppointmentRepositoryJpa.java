@@ -1,17 +1,18 @@
 package br.ifsp.clinicaveterinaria.scheduling.domain.repositories;
 
 import br.ifsp.clinicaveterinaria.scheduling.domain.entities.Appointment;
+import br.ifsp.clinicaveterinaria.scheduling.domain.entities.Veterinarian;
 import br.ifsp.clinicaveterinaria.scheduling.infra.mappers.AppointmentMapper;
-import br.ifsp.clinicaveterinaria.scheduling.infra.persistence.Repository;
 import br.ifsp.clinicaveterinaria.scheduling.infra.jpaentities.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public class AppointmentRepositoryJpa implements Repository<Appointment, Long> {
+public class AppointmentRepositoryJpa implements AppointmentRepository {
 
     @PersistenceContext
     private EntityManager em;
@@ -118,5 +119,20 @@ public class AppointmentRepositoryJpa implements Repository<Appointment, Long> {
                 .stream()
                 .map(AppointmentMapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public List<Appointment> findByDate(LocalDate date) {
+        return List.of();
+    }
+
+    @Override
+    public List<Appointment> findByVetAndDate(Veterinarian vet, LocalDate date) {
+        return List.of();
+    }
+
+    @Override
+    public List<Appointment> findByVetAndDateBetween(Veterinarian vet, LocalDate start, LocalDate end) {
+        return List.of();
     }
 }

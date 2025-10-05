@@ -1,11 +1,8 @@
 package br.ifsp.clinicaveterinaria.scheduling.domain.services;
 
-import br.ifsp.clinicaveterinaria.scheduling.domain.entities.Appointment;
-import br.ifsp.clinicaveterinaria.scheduling.domain.entities.Client;
-import br.ifsp.clinicaveterinaria.scheduling.domain.entities.ScheduledDate;
-import br.ifsp.clinicaveterinaria.scheduling.domain.entities.ScheduledTime;
-import br.ifsp.clinicaveterinaria.scheduling.domain.entities.Veterinarian;
+import br.ifsp.clinicaveterinaria.scheduling.domain.entities.*;
 import br.ifsp.clinicaveterinaria.scheduling.domain.repositories.AppointmentRepository;
+import br.ifsp.clinicaveterinaria.scheduling.domain.repositories.ServiceRoomRepository;
 import br.ifsp.clinicaveterinaria.scheduling.domain.repositories.VeterinarianRepository;
 
 import java.time.LocalDate;
@@ -19,13 +16,15 @@ public class SchedulingService {
 
     private final VeterinarianRepository veterinarianRepository;
     private final AppointmentRepository appointmentRepository;
+    private final ServiceRoomRepository roomRepository;
 
-    public SchedulingService(VeterinarianRepository veterinarianRepository, AppointmentRepository appointmentRepository) {
+    public SchedulingService(VeterinarianRepository veterinarianRepository, AppointmentRepository appointmentRepository, ServiceRoomRepository roomRepository) {
         this.veterinarianRepository = veterinarianRepository;
         this.appointmentRepository = appointmentRepository;
+        this.roomRepository = roomRepository;
     }
 
-    public void requestAppointment(Client client, Veterinarian veterinarian, ScheduledDate date) {
+    public Appointment requestAppointment(Client client, Veterinarian veterinarian, ScheduledDate date, ScheduledTime time, Animal animal) {
         if (client == null) {
             throw new IllegalArgumentException("cliente deve ser selecionado");
         }
@@ -35,17 +34,30 @@ public class SchedulingService {
         if (date == null) {
             throw new IllegalArgumentException("data deve ser selecionada");
         }
+        if (time == null) {
+            throw new IllegalArgumentException("horário deve ser selecionado");
+        }
+        if (animal == null) {
+            throw new IllegalArgumentException("animal deve ser selecionado");
+        }
 
         if (date.getScheduledDate().isBefore(LocalDate.now())) {
             throw new IllegalArgumentException("Não é possível agendar em uma data passada.");
         }
 
         List<ScheduledTime> availableTimes = findAvailableTimesFor(veterinarian, date);
-        if (availableTimes.isEmpty()) {
-            throw new IllegalArgumentException("Data indisponível.");
+        if (!availableTimes.contains(time)) {
+            throw new IllegalArgumentException("Horário indisponível.");
         }
 
-        // Lógica de negócio para criar o agendamento...
+        ServiceRoom availableRoom = roomRepository.findAvailable()
+                .orElseThrow(() -> new IllegalStateException("Nenhuma sala de atendimento disponível."));
+
+        Appointment newAppointment = new Appointment(client, veterinarian, date, time, availableRoom, animal);
+
+        appointmentRepository.add(newAppointment);
+
+        return newAppointment;
     }
 
     public List<Veterinarian> findAvailableVeterinarians(ScheduledDate appointmentDate) {
