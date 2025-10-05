@@ -29,9 +29,7 @@ public class SchedulingService {
     }
 
     public void requestAppointment(Client client, Veterinarian veterinarian) {
-        if (client == null) {
-            throw new IllegalArgumentException("cliente deve ser selecionado");
-        }
+        requestAppointment(client);
         if (veterinarian == null) {
             throw new IllegalArgumentException("veterinário deve ser selecionado");
         }
@@ -39,12 +37,7 @@ public class SchedulingService {
     }
 
     public void requestAppointment(Client client, Veterinarian veterinarian, ScheduledDate date) {
-        if (client == null) {
-            throw new IllegalArgumentException("cliente deve ser selecionado");
-        }
-        if (veterinarian == null) {
-            throw new IllegalArgumentException("veterinário deve ser selecionado");
-        }
+        requestAppointment(client, veterinarian);
         if (date == null) {
             throw new IllegalArgumentException("data deve ser selecionada");
         }
