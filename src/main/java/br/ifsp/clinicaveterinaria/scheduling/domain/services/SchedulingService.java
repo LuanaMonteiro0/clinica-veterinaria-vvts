@@ -35,6 +35,12 @@ public class SchedulingService {
         if (date == null) {
             throw new IllegalArgumentException("data deve ser selecionada");
         }
+
+        List<ScheduledTime> availableTimes = findAvailableTimesFor(veterinarian, date);
+        if (availableTimes.isEmpty()) {
+            throw new IllegalArgumentException("Data indisponível.");
+        }
+
         // Lógica de negócio para criar o agendamento...
     }
 
@@ -83,7 +89,6 @@ public class SchedulingService {
     }
 
     private Stream<ScheduledTime> generateAllPossibleTimes() {
-        // Horário de funcionamento: 9h às 18h
         LocalTime startTime = LocalTime.of(9, 0);
         LocalTime endTime = LocalTime.of(18, 0);
         long slotDurationInMinutes = 60;

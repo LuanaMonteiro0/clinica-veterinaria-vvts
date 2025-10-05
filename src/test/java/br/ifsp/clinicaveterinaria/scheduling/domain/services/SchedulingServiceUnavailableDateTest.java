@@ -28,7 +28,7 @@ public class SchedulingServiceUnavailableDateTest {
         SchedulingService service = new SchedulingService(veterinarianRepo, appointmentRepo);
 
         CPF cpf = new CPF();
-        cpf.setCPF("123.456.789-10");
+        cpf.setCPF("529.982.247-25");
         Client client = new Client("John Doe", new Phone("(11) 98765-4321"), cpf, Collections.emptyList());
         CRMV crmv = new CRMV();
         crmv.setCrmv("CRMV/SP 123456");
