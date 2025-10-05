@@ -3,13 +3,16 @@ package br.ifsp.clinicaveterinaria.scheduling.domain.services;
 import br.ifsp.clinicaveterinaria.scheduling.domain.entities.Appointment;
 import br.ifsp.clinicaveterinaria.scheduling.domain.entities.Client;
 import br.ifsp.clinicaveterinaria.scheduling.domain.entities.ScheduledDate;
+import br.ifsp.clinicaveterinaria.scheduling.domain.entities.ScheduledTime;
 import br.ifsp.clinicaveterinaria.scheduling.domain.entities.Veterinarian;
 import br.ifsp.clinicaveterinaria.scheduling.infra.persistence.Repository;
 
 import java.lang.reflect.Method;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SchedulingService {
 
@@ -58,157 +61,207 @@ public class SchedulingService {
     }
 
     public List<ScheduledDate> findAvailableDaysFor(
-                Veterinarian vet,
-                LocalDate start,
-                LocalDate end
+            Veterinarian vet,
+            LocalDate start,
+            LocalDate end
     ) {
-            if (vet == null) throw new IllegalArgumentException("veterinário deve ser selecionado");
-            if (start == null || end == null || end.isBefore(start))
-                throw new IllegalArgumentException("intervalo de datas inválido");
+        if (vet == null) throw new IllegalArgumentException("veterinário deve ser selecionado");
+        if (start == null || end == null || end.isBefore(start))
+            throw new IllegalArgumentException("intervalo de datas inválido");
 
-            List<?> appts = tryFindAppointmentsByVetAndDateBetween(this.appointmentRepository, vet, start, end);
+        List<?> appts = tryFindAppointmentsByVetAndDateBetween(this.appointmentRepository, vet, start, end);
 
-            Set<LocalDate> booked = appts.stream()
-                    .map(this::extractDateFromAppointment)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toSet());
+        Set<LocalDate> booked = appts.stream()
+                .map(this::extractDateFromAppointment)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
 
-            List<ScheduledDate> freeDays = new
-                    ArrayList<>();
-            LocalDate d = start;
-            while (!d.isAfter(end)) {
-                if (!booked.contains(d)) {
-                    freeDays.add(new ScheduledDate(d));
-                }
-                d = d.plusDays(1);
+        List<ScheduledDate> freeDays = new
+                ArrayList<>();
+        LocalDate d = start;
+        while (!d.isAfter(end)) {
+            if (!booked.contains(d)) {
+                freeDays.add(new ScheduledDate(d));
             }
-            return freeDays;
+            d = d.plusDays(1);
         }
+        return freeDays;
+    }
 
-        private List<?> tryFindAppointmentsByVetAndDateBetween(
-                Object repository,
-                Veterinarian vet,
-                LocalDate start,
-                LocalDate end
+    public List<ScheduledTime> findAvailableTimesFor(Veterinarian vet, ScheduledDate date) {
+        if (vet == null) throw new IllegalArgumentException("Veterinário deve ser selecionado.");
+        if (date == null) throw new IllegalArgumentException("A data deve ser selecionada.");
+
+        List<?> appointmentsOnDay = tryFindAppointmentsByVetAndDate(appointmentRepository, vet, date.getScheduledDate());
+
+        Set<LocalTime> bookedStartTimes = appointmentsOnDay.stream()
+                .map(this::extractTimeFromAppointment)
+                .filter(Objects::nonNull)
+                .map(ScheduledTime::getStartTime)
+                .collect(Collectors.toSet());
+
+        return generateAllPossibleTimes()
+                .filter(slot -> !bookedStartTimes.contains(slot.getStartTime()))
+                .collect(Collectors.toList());
+    }
+
+    private Stream<ScheduledTime> generateAllPossibleTimes() {
+        // Horário de funcionamento padrão: 9h às 18h, com slots de 1 hora
+        LocalTime startTime = LocalTime.of(9, 0);
+        LocalTime endTime = LocalTime.of(18, 0);
+        long slotDurationInMinutes = 60;
+
+        return Stream.iterate(startTime, time -> time.plusMinutes(slotDurationInMinutes))
+                .limit((endTime.toSecondOfDay() - startTime.toSecondOfDay()) / (slotDurationInMinutes * 60))
+                .map(time -> new ScheduledTime(time, time.plusMinutes(slotDurationInMinutes)));
+    }
+
+    private List<?> tryFindAppointmentsByVetAndDate(Object repository, Veterinarian vet, LocalDate date) {
+        if (repository == null) return Collections.emptyList();
+        try {
+            Method m = repository.getClass().getMethod("findByVetAndDate", Veterinarian.class, LocalDate.class);
+            Object r = m.invoke(repository, vet, date);
+            if (r instanceof List<?> l) return l;
+        } catch (Exception ignored) {}
+        return Collections.emptyList();
+    }
+
+    private ScheduledTime extractTimeFromAppointment(Object appt) {
+        try {
+            Method m = appt.getClass().getMethod("getScheduledTime");
+            Object r = m.invoke(appt);
+            if (r instanceof ScheduledTime st) {
+                return st;
+            }
+        } catch (Exception ignored) {
+        }
+        return null;
+    }
+
+    private List<?> tryFindAppointmentsByVetAndDateBetween(
+            Object repository,
+            Veterinarian vet,
+            LocalDate start,
+            LocalDate end
     ) {
-            if (repository == null) return
-                    Collections.emptyList();
-            try {
-                Method m = repository.getClass().getMethod("findByVetAndDateBetween",
-                        Veterinarian.class,
-                        LocalDate.class,
-                        LocalDate.class);
-                Object r = m.invoke(repository, vet, start, end);
-                if (r instanceof
-                        List<?> l) return l;
-            } catch (Exception ignored) {
-            }
-
-            try {
-
-                Method m = repository.getClass().getMethod("findByVet",
-                        Veterinarian.class);
-                Object r = m.invoke(repository, vet);
-                if (r instanceof java.util.List<?> l) {
-                    return l.stream()
-                            .filter(o -> {
-                                LocalDate d = extractDateFromAppointment(o);
-                                return d != null && !d.isBefore(start) && !d.isAfter(end);
-                            })
-                            .toList();
-                }
-            } catch (Exception ignored) {
-            }
-
-            return java.util.Collections.emptyList();
+        if (repository == null) return
+                Collections.emptyList();
+        try {
+            Method m = repository.getClass().getMethod("findByVetAndDateBetween",
+                    Veterinarian.class,
+                    LocalDate.class,
+                    LocalDate.class);
+            Object r = m.invoke(repository, vet, start, end);
+            if (r instanceof
+                    List<?> l) return l;
+        } catch (Exception ignored) {
         }
 
-        private LocalDate extractDateFromAppointment(Object appt) {
-            try {
+        try {
 
-                Method m = appt.getClass().getMethod("getScheduledDate");
-                Object r = m.invoke(appt);
-                if (r instanceof ScheduledDate sd) {
-                    return extractDate(sd);
-                }
-            } catch (Exception ignored) {
+            Method m = repository.getClass().getMethod("findByVet",
+                    Veterinarian.class);
+            Object r = m.invoke(repository, vet);
+            if (r instanceof java.util.List<?> l) {
+                return l.stream()
+                        .filter(o -> {
+                            LocalDate d = extractDateFromAppointment(o);
+                            return d != null && !d.isBefore(start) && !d.isAfter(end);
+                        })
+                        .toList();
             }
-            try {
-
-                Method m = appt.getClass().getMethod("getDate");
-                Object r = m.invoke(appt);
-                if (r instanceof LocalDate d) return d;
-            } catch (Exception ignored) {
-            }
-            return null;
+        } catch (Exception ignored) {
         }
 
-        private LocalDate extractDate(ScheduledDate sd) {
-            try {
-                Method m = sd.getClass().getMethod("value");
-                Object r = m.invoke(sd);
-                if (r instanceof LocalDate d) return d;
-            } catch (Exception ignored) {
-            }
-            try {
-                Method m = sd.getClass().getMethod("getValue");
-                Object r = m.invoke(sd);
-                if (r instanceof LocalDate d) return d;
-            } catch (Exception ignored) {
-            }
-            try {
-                var f = sd.getClass().getDeclaredField("date");
-                f.setAccessible(true);
-                Object r = f.get(sd);
-                if (r instanceof LocalDate d) return d;
-            } catch (Exception ignored) {
-            }
-            throw new IllegalStateException("Não consegui extrair LocalDate de ScheduledDate (esperava value()/getValue()/campo 'date').");
-        }
+        return java.util.Collections.emptyList();
+    }
 
-        private List<Veterinarian> findAllVets() {
-            for (String m : List.of("findAll", "listAll", "all", "list")) {
-                List<Veterinarian> r = invokeListNoArg(veterinarianRepository, m, Veterinarian.class);
-                if (r != null) return r;
-            }
-            return Collections.emptyList();
-        }
+    private LocalDate extractDateFromAppointment(Object appt) {
+        try {
 
-        private List<Appointment> findAppointmentsByDate(LocalDate date) {
-            List<Appointment> r = invokeListOneArg(appointmentRepository, "findByDate", LocalDate.class, date, Appointment.class);
+            Method m = appt.getClass().getMethod("getScheduledDate");
+            Object r = m.invoke(appt);
+            if (r instanceof ScheduledDate sd) {
+                return extractDate(sd);
+            }
+        } catch (Exception ignored) {
+        }
+        try {
+
+            Method m = appt.getClass().getMethod("getDate");
+            Object r = m.invoke(appt);
+            if (r instanceof LocalDate d) return d;
+        } catch (Exception ignored) {
+        }
+        return null;
+    }
+
+    private LocalDate extractDate(ScheduledDate sd) {
+        try {
+            Method m = sd.getClass().getMethod("value");
+            Object r = m.invoke(sd);
+            if (r instanceof LocalDate d) return d;
+        } catch (Exception ignored) {
+        }
+        try {
+            Method m = sd.getClass().getMethod("getValue");
+            Object r = m.invoke(sd);
+            if (r instanceof LocalDate d) return d;
+        } catch (Exception ignored) {
+        }
+        try {
+            var f = sd.getClass().getDeclaredField("date");
+            f.setAccessible(true);
+            Object r = f.get(sd);
+            if (r instanceof LocalDate d) return d;
+        } catch (Exception ignored) {
+        }
+        throw new IllegalStateException("Não consegui extrair LocalDate de ScheduledDate (esperava value()/getValue()/campo 'date').");
+    }
+
+    private List<Veterinarian> findAllVets() {
+        for (String m : List.of("findAll", "listAll", "all", "list")) {
+            List<Veterinarian> r = invokeListNoArg(veterinarianRepository, m, Veterinarian.class);
             if (r != null) return r;
-            return Collections.emptyList();
         }
+        return Collections.emptyList();
+    }
 
-        private Veterinarian extractVet(Appointment a) {
-            try {
-                Method m = a.getClass().getMethod("getVet");
-                Object r = m.invoke(a);
-                if (r instanceof Veterinarian v) return v;
-            } catch (Exception ignored) {
-            }
-            try {
-                Method m = a.getClass().getMethod("getVeterinarian");
-                Object r = m.invoke(a);
-                if (r instanceof Veterinarian v) return v;
-            } catch (Exception ignored) {
-            }
-            return null;
+    private List<Appointment> findAppointmentsByDate(LocalDate date) {
+        List<Appointment> r = invokeListOneArg(appointmentRepository, "findByDate", LocalDate.class, date, Appointment.class);
+        if (r != null) return r;
+        return Collections.emptyList();
+    }
+
+    private Veterinarian extractVet(Appointment a) {
+        try {
+            Method m = a.getClass().getMethod("getVet");
+            Object r = m.invoke(a);
+            if (r instanceof Veterinarian v) return v;
+        } catch (Exception ignored) {
         }
+        try {
+            Method m = a.getClass().getMethod("getVeterinarian");
+            Object r = m.invoke(a);
+            if (r instanceof Veterinarian v) return v;
+        } catch (Exception ignored) {
+        }
+        return null;
+    }
 
-        @SuppressWarnings("unchecked")
-        private static <T> List<T> invokeListNoArg(Object target, String methodName, Class<T> itemType) {
-            try {
-                Method m = target.getClass().getMethod(methodName);
-                Object r = m.invoke(target);
-                if (r instanceof List<?> list) {
-                    if (list.isEmpty() || itemType.isInstance(list.get(0))) {
-                        return (List<T>) list;
-                    }
+    @SuppressWarnings("unchecked")
+    private static <T> List<T> invokeListNoArg(Object target, String methodName, Class<T> itemType) {
+        try {
+            Method m = target.getClass().getMethod(methodName);
+            Object r = m.invoke(target);
+            if (r instanceof List<?> list) {
+                if (list.isEmpty() || itemType.isInstance(list.get(0))) {
+                    return (List<T>) list;
                 }
-            } catch (Exception ignored) {
             }
-            return null;
+        } catch (Exception ignored) {
+        }
+        return null;
     }
 
     @SuppressWarnings("unchecked")
