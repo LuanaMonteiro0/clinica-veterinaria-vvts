@@ -38,6 +38,19 @@ public class SchedulingService {
         // lógica futura...
     }
 
+    public void requestAppointment(Client client, Veterinarian veterinarian, ScheduledDate date) {
+        if (client == null) {
+            throw new IllegalArgumentException("cliente deve ser selecionado");
+        }
+        if (veterinarian == null) {
+            throw new IllegalArgumentException("veterinário deve ser selecionado");
+        }
+        if (date == null) {
+            throw new IllegalArgumentException("data deve ser selecionada");
+        }
+        // lógica futura...
+    }
+
     public List<Veterinarian> findAvailableVeterinarians(ScheduledDate appointmentDate) {
         LocalDate date = extractDate(appointmentDate);
         List<Veterinarian> all = findAllVets();
