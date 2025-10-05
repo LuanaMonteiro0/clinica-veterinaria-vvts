@@ -36,6 +36,10 @@ public class SchedulingService {
             throw new IllegalArgumentException("data deve ser selecionada");
         }
 
+        if (date.getScheduledDate().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Não é possível agendar em uma data passada.");
+        }
+
         List<ScheduledTime> availableTimes = findAvailableTimesFor(veterinarian, date);
         if (availableTimes.isEmpty()) {
             throw new IllegalArgumentException("Data indisponível.");
