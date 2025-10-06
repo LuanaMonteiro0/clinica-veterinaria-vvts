@@ -31,7 +31,7 @@ public class SchedulingServiceUnavailableTimeTest {
         crmv.setCrmv("CRMV/SP 123456");
         Veterinarian vet = new Veterinarian("Dr. House", "house@vet.com", crmv, new Phone("(11) 12345-6789"));
         CPF cpf = new CPF();
-        cpf.setCPF("123.456.789-10");
+        cpf.setCPF("529.982.247-25");
         Client client = new Client("John Doe", new Phone("(11) 98765-4321"), cpf, Collections.emptyList());
         Animal animal = new Animal("Bolinha", 2, "Poodle", 5.5);
         client.setAnimal(List.of(animal));
