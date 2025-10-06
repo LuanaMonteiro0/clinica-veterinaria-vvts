@@ -41,8 +41,15 @@ public class SchedulingService {
             throw new IllegalArgumentException("animal deve ser selecionado");
         }
 
-        if (date.getScheduledDate().isBefore(LocalDate.now())) {
+        LocalDate today = LocalDate.now();
+        LocalTime now = LocalTime.now();
+
+        if (date.getScheduledDate().isBefore(today)) {
             throw new IllegalArgumentException("Não é possível agendar em uma data passada.");
+        }
+
+        if (date.getScheduledDate().isEqual(today) && time.getStartTime().isBefore(now)) {
+            throw new IllegalArgumentException("Não é possível agendar em um horário passado.");
         }
 
         List<ScheduledTime> availableTimes = findAvailableTimesFor(veterinarian, date);
