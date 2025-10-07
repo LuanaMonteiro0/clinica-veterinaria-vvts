@@ -1,6 +1,7 @@
 package br.ifsp.clinicaveterinaria.scheduling.domain.entities;
 
 import java.time.LocalTime;
+import java.util.Objects;
 
 public class ScheduledTime {
 
@@ -53,5 +54,17 @@ public class ScheduledTime {
             throw new IllegalStateException("Start time must be before end time.");
         }
     }
-}
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ScheduledTime that = (ScheduledTime) o;
+        return Objects.equals(startTime, that.startTime) && Objects.equals(endTime, that.endTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(startTime, endTime);
+    }
+}

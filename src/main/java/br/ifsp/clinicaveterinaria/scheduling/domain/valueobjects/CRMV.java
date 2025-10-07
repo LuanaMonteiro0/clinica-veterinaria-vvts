@@ -50,4 +50,18 @@ public final class CRMV {
         return sb.toString();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CRMV crmv1 = (CRMV) o;
+        return Objects.equals(crmv, crmv1.getCrmv());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(crmv);
+    }
+
+
 }

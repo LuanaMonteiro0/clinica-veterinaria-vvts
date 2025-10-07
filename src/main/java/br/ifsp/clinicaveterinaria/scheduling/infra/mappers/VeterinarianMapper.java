@@ -17,8 +17,7 @@ public final class VeterinarianMapper {
 
     public static Veterinarian toDomain(VeterinarianJpaEntity e) {
 
-        Phone phone = new Phone();
-        phone.setPhone(e.getPhone());
+        Phone phone = new Phone(e.getPhone());
 
         return new Veterinarian(
                 e.getName(),
